@@ -42,17 +42,17 @@ ddc-mc init --name workspace1
 ddc-mc init --name workspace1 --overwrite
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-    initCmd := ddclib.InitCommand {
-      Name: name,
+		initCmd := ddclib.InitCommand{
+			Name: name,
 		}
 
-    initCmd.Execute(overwrite)
+		initCmd.Execute(overwrite)
 	},
 }
 
 func init() {
-  initCmd.Flags().StringVarP(&name, "name", "n", "", "workspace name")
-  initCmd.Flags().BoolVar(&overwrite, "overwrite", false, "overwrite existing workspace, if any")
+	initCmd.Flags().StringVarP(&name, "name", "n", "", "workspace name")
+	initCmd.Flags().BoolVar(&overwrite, "overwrite", false, "overwrite existing workspace, if any")
 
 	RootCmd.AddCommand(initCmd)
 }
