@@ -12,3 +12,7 @@ ddc-mc write                                              # Writes a docker comp
 ```
 
 With that `docker-compose up --file example.yml` can be used
+
+## Build
+
+```go build -o ddc-mc``

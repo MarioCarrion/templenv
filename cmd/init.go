@@ -21,31 +21,38 @@
 package cmd
 
 import (
-	"fmt"
+	"github.com/mariocarrion/dynamic-docker-composer/ddclib"
 	"github.com/spf13/cobra"
-	"os"
 )
 
-var RootCmd = &cobra.Command{
-	Use:   "ddc-mc [commands]",
-	Short: "Generate a docker-compose.yml dynamically",
-	Long: `Dynamic Docker Composer helps you generating a dynamic docker-compose.yml
+var name string
+var overwrite bool
 
-By executing a sequence of commands you would be able to generate a compose file
-easily, this is useful when working on "feature containers" that need several
-containers to easily run and test a complex system.
+// initCmd represents the init command
+var initCmd = &cobra.Command{
+	Use:   "init",
+	Short: "Initializes and selects the workspace to use",
+	Long: `Selects or initializes a workspace, if the workspace does not exist
+then is created otherwise the "--overwrite" argument has to be provided for the
+command to succeed.
 
 For example:
 
-ddc-mc init --name example1
-ddc-mc add --template web-template --container web-container1
-ddc-mc write
+ddc-mc init --name workspace1
+ddc-mc init --name workspace1 --overwrite
 `,
+	Run: func(cmd *cobra.Command, args []string) {
+    initCmd := ddclib.InitCommand {
+      Name: name,
+		}
+
+    initCmd.Execute(overwrite)
+	},
 }
 
-func Execute() {
-	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
-	}
+func init() {
+  initCmd.Flags().StringVarP(&name, "name", "n", "", "workspace name")
+  initCmd.Flags().BoolVar(&overwrite, "overwrite", false, "overwrite existing workspace, if any")
+
+	RootCmd.AddCommand(initCmd)
 }
