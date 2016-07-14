@@ -15,4 +15,4 @@ With that `docker-compose up --file example.yml` can be used
 
 ## Build
 
-```go build -o ddc-mc``
+```go build -o ddc-mc```
