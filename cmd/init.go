@@ -32,9 +32,8 @@ var overwrite bool
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initializes and selects the workspace to use",
-	Long: `Selects or initializes a workspace, if the workspace does not exist
-then is created otherwise the "--overwrite" argument has to be provided for the
-command to succeed.
+	Long: `Selects or initializes a workspace, if the workspace does not exist then
+it is created. Provide the "--overwrite" argument to overwrite previous work.
 
 For example:
 
@@ -42,11 +41,7 @@ ddc-mc init --name workspace1
 ddc-mc init --name workspace1 --overwrite
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		initCmd := ddclib.InitCommand{
-			Name: name,
-		}
-
-		initCmd.Execute(overwrite)
+		ddclib.NewInitCommand(name).Execute(overwrite)
 	},
 }
 
