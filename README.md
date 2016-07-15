@@ -1,5 +1,7 @@
 # Docker Dynamic Composer (WIP)
 
+[![Build Status](https://travis-ci.org/MarioCarrion/dynamic-docker-composer.svg?branch=master)](https://travis-ci.org/MarioCarrion/dynamic-docker-composer) [![Code Climate](https://codeclimate.com/github/MarioCarrion/dynamic-docker-composer/badges/gpa.svg)](https://codeclimate.com/github/MarioCarrion/dynamic-docker-composer)
+
 Project for creating dynamic composer files after a sequence of commands.
 
 ## Workflow
