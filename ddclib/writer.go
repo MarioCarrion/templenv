@@ -23,44 +23,52 @@ package ddclib
 import (
 	"log"
 	"os"
+	"os/user"
+	"strings"
 )
 
-type InitCommand struct {
-	Name string
-	*writer
+type writer struct {
+	homeDir string
 }
 
-func NewInitCommand(name string) *InitCommand {
-	return &InitCommand{
-		Name:   name,
-		writer: NewWriter(),
-	}
-}
-
-func (cmd *InitCommand) Execute(overwrite bool) {
-	if len(cmd.Name) == 0 {
-		log.Fatal("error: workspace name is required")
-	}
-
-	exists, err := cmd.exists(cmd.Name)
-	if exists == false && err != nil {
+func NewWriter() *writer {
+	usr, err := user.Current()
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	if exists == false || overwrite == true {
-		_, err = os.Create(cmd.filename(cmd.Name))
+	homeDir := strings.Join([]string{usr.HomeDir, ".ddc"}, "/")
+	writer := &writer{
+		homeDir: homeDir,
+	}
+
+	exists, err := writer.exists("")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if exists == false {
+		err = os.Mkdir(homeDir, os.FileMode(int(0700)))
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		if overwrite == true {
-			log.Println("workspace overwritten")
-		} else {
-			log.Println("workspace created")
-		}
-	} else if overwrite == false {
-		log.Println("workspace file exists, selecting it")
 	}
 
-	log.Printf("Executing! %s overwrite %t\n", cmd.Name, overwrite)
+	return writer
+}
+
+func (w *writer) exists(name string) (bool, error) {
+	_, err := os.Stat(w.filename(name))
+
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
+	return true, err
+}
+
+func (w *writer) filename(name string) string {
+	return strings.Join([]string{w.homeDir, name}, "/")
 }
