@@ -21,33 +21,32 @@
 package cmd
 
 import (
-	"github.com/mariocarrion/dynamic-docker-composer/ddclib"
+	"github.com/MarioCarrion/dynamic-docker-composer/ddclib"
 	"github.com/spf13/cobra"
 )
 
-var name string
-var overwrite bool
+var initName string
+var initOverwrite bool
 
-// initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initializes and selects the workspace to use",
 	Long: `Selects or initializes a workspace, if the workspace does not exist then
 it is created. Provide the "--overwrite" argument to overwrite previous work.
 
-For example:
+Examples:
 
 ddc-mc init --name workspace1
 ddc-mc init --name workspace1 --overwrite
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		ddclib.NewInitCommand(name).Execute(overwrite)
+		ddclib.NewInitCommand(initName).Execute(initOverwrite)
 	},
 }
 
 func init() {
-	initCmd.Flags().StringVarP(&name, "name", "n", "", "workspace name")
-	initCmd.Flags().BoolVar(&overwrite, "overwrite", false, "overwrite existing workspace, if any")
+	initCmd.Flags().StringVarP(&initName, "name", "n", "", "workspace name")
+	initCmd.Flags().BoolVar(&initOverwrite, "overwrite", false, "overwrite existing workspace, if any")
 
-	RootCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(initCmd)
 }

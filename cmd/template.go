@@ -18,44 +18,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package ddclib
+package cmd
 
 import (
-	"log"
-	"os"
+	"fmt"
+	"github.com/spf13/cobra"
 )
 
-// InitCommand defines the "init" command
-type InitCommand struct {
-	Name string
-	*session
+var templateName string
+var templateAdd string
+
+var templateCmd = &cobra.Command{
+	Use:   "template",
+	Short: "Adds or replaces templates to be used by workspaces",
+	Long: `Adds or replaces a template to be used later on by the "add" command.
+Currently only local files are supported.
+
+Examples:
+
+ddc-mc template --name hello_work --add /home/hello/my_template
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("TODO")
+	},
 }
 
-// NewInitCommand initializes the "init" command
-func NewInitCommand(name string) *InitCommand {
-	return &InitCommand{
-		Name:    name,
-		session: newSession(),
-	}
-}
+func init() {
+	templateCmd.Flags().StringVarP(&templateName, "name", "n", "", "template name")
+	templateCmd.Flags().StringVarP(&templateAdd, "add", "a", "", "filename to add")
 
-// Execute calls the "init" command logic
-func (cmd *InitCommand) Execute(overwrite bool) {
-	if len(cmd.Name) == 0 {
-		log.Println("using workspace:", cmd.current())
-		os.Exit(0)
-	}
-
-	setCurrent := false
-	if (cmd.current() == "") || (cmd.current() != cmd.Name && overwrite == true) {
-		setCurrent = true
-	} else if cmd.current() != cmd.Name {
-		log.Fatal("error: use --overwrite the change the session")
-	}
-
-	if setCurrent == true {
-		cmd.setCurrent(cmd.Name)
-	}
-
-	log.Printf("Executing! %s overwrite %t\n", cmd.Name, overwrite)
+	rootCmd.AddCommand(templateCmd)
 }

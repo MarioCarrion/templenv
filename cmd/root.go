@@ -26,7 +26,7 @@ import (
 	"os"
 )
 
-var RootCmd = &cobra.Command{
+var rootCmd = &cobra.Command{
 	Use:   "ddc-mc [commands]",
 	Short: "Generate a docker-compose.yml dynamically",
 	Long: `Dynamic Docker Composer helps you generating a dynamic docker-compose.yml
@@ -43,8 +43,9 @@ ddc-mc write
 `,
 }
 
+// Execute all the available commands
 func Execute() {
-	if err := RootCmd.Execute(); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
 	}

@@ -8,6 +8,8 @@ Project for creating dynamic composer files after a sequence of commands.
 
 ```
 ddc-mc init --name example                                # Initiates the "example" workspace
+ddc-mc template --add ./template1 --name template1        # Adds a template called "template1" from file "./template1"
+ddc-mc template --add ./templateA --name templateA        # Adds a template called "templateA" from file "./templateA"
 ddc-mc add --template template1 --container container-123 # Adds "container-123" using the template "template1"
 ddc-mc add --template templateA --container container-abc # Adds "container-abc" using the template "templateA"
 ddc-mc write                                              # Writes a docker compose file called "example.xml"

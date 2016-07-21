@@ -20,7 +20,7 @@
 
 package main
 
-import "github.com/mariocarrion/dynamic-docker-composer/cmd"
+import "github.com/MarioCarrion/dynamic-docker-composer/cmd"
 
 func main() {
 	cmd.Execute()
