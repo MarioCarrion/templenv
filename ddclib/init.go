@@ -27,39 +27,31 @@ import (
 
 type InitCommand struct {
 	Name string
-	*writer
+	*session
 }
 
 func NewInitCommand(name string) *InitCommand {
 	return &InitCommand{
-		Name:   name,
-		writer: NewWriter(),
+		Name:    name,
+		session: newSession(),
 	}
 }
 
 func (cmd *InitCommand) Execute(overwrite bool) {
 	if len(cmd.Name) == 0 {
-		log.Fatal("error: workspace name is required")
+		log.Println("using workspace:", cmd.current())
+		os.Exit(0)
 	}
 
-	exists, err := cmd.exists(cmd.Name)
-	if exists == false && err != nil {
-		log.Fatal(err)
+	setCurrent := false
+	if (cmd.current() == "") || (cmd.current() != cmd.Name && overwrite == true) {
+		setCurrent = true
+	} else if cmd.current() != cmd.Name {
+		log.Fatal("error: use --overwrite the change the session")
 	}
 
-	if exists == false || overwrite == true {
-		_, err = os.Create(cmd.filename(cmd.Name))
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if overwrite == true {
-			log.Println("workspace overwritten")
-		} else {
-			log.Println("workspace created")
-		}
-	} else if overwrite == false {
-		log.Println("workspace file exists, selecting it")
+	if setCurrent == true {
+		cmd.setCurrent(cmd.Name)
 	}
 
 	log.Printf("Executing! %s overwrite %t\n", cmd.Name, overwrite)

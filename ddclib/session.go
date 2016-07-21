@@ -21,43 +21,67 @@
 package ddclib
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 	"os/user"
 	"strings"
 )
 
-type writer struct {
-	homeDir string
+type session struct {
+	homeDir     string
+	currentName string
 }
 
-func NewWriter() *writer {
-	usr, err := user.Current()
+const current = "CURRENT"
+
+func checkError(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func newSession() *session {
+	usr, err := user.Current()
+	checkError(err)
 
 	homeDir := strings.Join([]string{usr.HomeDir, ".ddc"}, "/")
-	writer := &writer{
+	session := &session{
 		homeDir: homeDir,
 	}
 
-	exists, err := writer.exists("")
-	if err != nil {
-		log.Fatal(err)
-	}
+	exists, err := session.exists("")
+	checkError(err)
+
 	if exists == false {
 		err = os.Mkdir(homeDir, os.FileMode(int(0700)))
-		if err != nil {
-			log.Fatal(err)
-		}
+		checkError(err)
 	}
 
-	return writer
+	session.currentName = session.current()
+
+	return session
 }
 
-func (w *writer) exists(name string) (bool, error) {
-	_, err := os.Stat(w.filename(name))
+func (s *session) current() string {
+	if s.currentName != "" {
+		return s.currentName
+	}
+
+	exists, err := s.exists(current)
+	if exists == false {
+		return ""
+	}
+
+	session, err := ioutil.ReadFile(s.filename(current))
+	checkError(err)
+
+	s.currentName = string(session)
+	return s.currentName
+}
+
+func (s *session) exists(name string) (bool, error) {
+	_, err := os.Stat(s.filename(name))
 
 	if err == nil {
 		return true, nil
@@ -69,6 +93,21 @@ func (w *writer) exists(name string) (bool, error) {
 	return true, err
 }
 
-func (w *writer) filename(name string) string {
-	return strings.Join([]string{w.homeDir, name}, "/")
+func (s *session) filename(name string) string {
+	return strings.Join([]string{s.homeDir, name}, "/")
+}
+
+func (s *session) setCurrent(newName string) {
+	f, err := os.Create(s.filename(current))
+	defer f.Close()
+
+	checkError(err)
+
+	_, err = f.WriteString(newName)
+	checkError(err)
+
+	err = f.Sync()
+	checkError(err)
+
+	s.currentName = newName
 }
