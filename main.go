@@ -20,8 +20,11 @@
 
 package main
 
-import "github.com/MarioCarrion/dynamic-docker-composer/cmd"
+import (
+  "os"
+  "fmt"
+)
 
 func main() {
-	cmd.Execute()
+  fmt.Println(os.Getenv("HELLO"))
 }
