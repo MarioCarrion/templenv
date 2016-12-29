@@ -21,10 +21,29 @@
 package main
 
 import (
-  "os"
-  "fmt"
+	"log"
+	"os"
+	"text/template"
 )
 
 func main() {
-  fmt.Println(os.Getenv("HELLO"))
+	if len(os.Args) != 2 {
+		log.Fatalln("template filename argument is missing")
+	}
+
+	tmpl, err := template.New(os.Args[1]).Funcs(template.FuncMap{"getEnv": getEnv}).ParseFiles(os.Args[1])
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	err = tmpl.Execute(os.Stdout, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return
+}
+
+func getEnv(name string) string {
+	return os.Getenv(name)
 }

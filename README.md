@@ -1,8 +1,12 @@
 # templenv
 
+## Install
+
+`go get github.com/MarioCarrion/templenv`
+
 ## What is it?
 
-**templenv** is a command line program used for generating files using a combination of Go templates and environment variables, a key piece in the **Docker Quality Assurance Workflow**.
+**templenv** is a command line program for generating output from environment variables by using Go templates, a key piece in the **Docker Full Development Workflow**. `os.StdOut` is used for the writer when executing the template.
 
 # Templates
 
@@ -10,27 +14,4 @@
 
 # Environment Variables
 
-**templenv** uses environment variables for dynamically writing the output file. Those variables are supposed to be prefixed by a specific string to avoid collisions with other environment variables, the default prefix is **TENV**. There are two ways to define the environment variables: either by using the _live environment_ or by loading an _environment file_.
-
-## Live environment
-
-Just export the variables when calling the **templenv** program to allow it to have access to those variables. For example:
-
-```
-DCC_HELLO="hello world" mc-templenv --template ./docker-compose.tmpl --output ./docker-compose.yml
-```
-
-## Environment file
-
-
-
-loads the environment variables from either the live environment or from a file, it allows you to specify a _prefix_; this prefix is meant to be used for avoiding collisions with other environment variables for example you could define a variable .
-
-```
-dcc-mc --template docker-compose.tmpl --output docker-compose-something.yml --env_file env.dev --env_prefix xyz
-```
-With that `docker-compose up --file example.yml` can be used
-
-## Build
-
-```go build -o ddc-mc```
+**templenv** uses environment variables for dynamically writing the output file. Any environment variable can be accessed from within **templenv** though the internal template function **getEnv**.
