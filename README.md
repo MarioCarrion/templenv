@@ -28,7 +28,7 @@ Assuming you have a template `snowman.tmpl` with the following content:
 My name is {{ getEnv "USER" }} and I like warm hugs!
 ```
 
-and your current username is `mario`, by using `templenv example.tmpl` the following output will be generated:
+and your current username is `mario`, by using `templenv snowman.tmpl` the following output will be generated:
 
 ```
 My name is mario and I like warm hugs!
