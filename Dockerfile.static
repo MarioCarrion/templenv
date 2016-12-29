@@ -1,0 +1,9 @@
+# vim: set syntax=dockerfile:
+FROM tianon/true
+
+MAINTAINER Mario Carrion "info@carrion.ws"
+
+COPY ["templenv", "/app/"]
+
+ENTRYPOINT ["/app/templenv"]
+CMD []

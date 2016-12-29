@@ -15,3 +15,7 @@
 # Environment Variables
 
 **templenv** uses environment variables for dynamically writing the output file. Any environment variable can be accessed from within **templenv** though the internal template function **getEnv**.
+
+# Docker
+
+You can use the included `Dockerfile` for building your own image, or if you prefer a smaller one you can use the `Dockerfile.static`, see [DockerHub](https://hub.docker.com/r/mariocarrion/templenv/) as well.
