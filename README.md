@@ -1,5 +1,7 @@
 # templenv
 
+[![Build Status](https://travis-ci.org/MarioCarrion/templenv.svg?branch=master)](https://travis-ci.org/MarioCarrion/templenv)
+
 ## Install
 
 `go get github.com/MarioCarrion/templenv`

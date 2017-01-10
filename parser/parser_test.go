@@ -1,4 +1,4 @@
-// Copyright © 2016 Mario Carrion <mario@carrion.ws>
+// Copyright © 2017 Mario Carrion <mario@carrion.ws>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,26 +18,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package main
+package parser_test
 
 import (
-	"fmt"
 	"os"
+	"testing"
 
 	"github.com/MarioCarrion/templenv/parser"
 )
 
-func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("template filename argument is missing")
-		os.Exit(1)
-	}
+func TestParse(t *testing.T) {
+	os.Setenv("USER999", "mario")
 
-	res, err := parser.ParseFile(os.Args[1])
-	if err != nil {
-		fmt.Println("template filename argument is missing")
-		os.Exit(1)
+	text := `Hello {{ getEnv "USER999" }}`
+	expected := "Hello mario"
+	if result, _ := parser.Parse("filename.tmpl", text); result != expected {
+		t.Errorf("Expected result %s, but it was %s instead.", expected, text)
 	}
-
-	fmt.Print(res)
 }

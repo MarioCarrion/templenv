@@ -1,4 +1,4 @@
-// Copyright © 2016 Mario Carrion <mario@carrion.ws>
+// Copyright © 2017 Mario Carrion <mario@carrion.ws>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,26 +18,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package main
+package parser
 
 import (
-	"fmt"
+	"bytes"
+	"io/ioutil"
 	"os"
-
-	"github.com/MarioCarrion/templenv/parser"
+	"path"
+	"text/template"
 )
 
-func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("template filename argument is missing")
-		os.Exit(1)
-	}
-
-	res, err := parser.ParseFile(os.Args[1])
+func ParseFile(filename string) (string, error) {
+	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		fmt.Println("template filename argument is missing")
-		os.Exit(1)
+		return "", err
 	}
 
-	fmt.Print(res)
+	return Parse(filename, string(data))
+}
+
+func Parse(filename, text string) (string, error) {
+	tmpl, err := template.New(path.Base(filename)).Funcs(template.FuncMap{"getEnv": getEnv}).Parse(text)
+	if err != nil {
+		return "", err
+	}
+
+	var writer bytes.Buffer
+	err = tmpl.Execute(&writer, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return writer.String(), nil
+}
+
+func getEnv(name string) string {
+	return os.Getenv(name)
 }
