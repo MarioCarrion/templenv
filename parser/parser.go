@@ -69,7 +69,7 @@ func loadEnvFilename(prefix, name string) string {
 	defer f.Close()
 
 	var lines []string
-  var line string
+	var line string
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {

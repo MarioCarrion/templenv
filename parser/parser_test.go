@@ -76,6 +76,6 @@ END`
  - HI: 1238475
 END`
 	if result, _ := parser.Parse("filename.tmpl", text); result != expected {
-    t.Errorf("Expected result\n%s\nbut it was instead:\n%s", expected, result)
+		t.Errorf("Expected result\n%s\nbut it was instead:\n%s", expected, result)
 	}
 }
