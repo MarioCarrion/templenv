@@ -1,2 +1,4 @@
 *.swp
 templenv
+output
+coverage.out

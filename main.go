@@ -35,7 +35,7 @@ func main() {
 
 	res, err := parser.ParseFile(os.Args[1])
 	if err != nil {
-		fmt.Println("template filename argument is missing")
+    fmt.Println("error parsing your template: ", err)
 		os.Exit(1)
 	}
 

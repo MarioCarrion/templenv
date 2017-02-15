@@ -14,3 +14,7 @@ build: builddocker
 gobuild:
 	CGO_ENABLED=0 GOOS=linux go build --ldflags="-s" -a -installsuffix cgo \
 							-o templenv ./go/src/github.com/MarioCarrion/templenv
+
+test:
+	go test github.com/MarioCarrion/templenv/parser -coverprofile=coverage.out && \
+		go tool cover -html=coverage.out

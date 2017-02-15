@@ -21,10 +21,12 @@
 package parser
 
 import (
+	"bufio"
 	"bytes"
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 	"text/template"
 )
 
@@ -38,7 +40,10 @@ func ParseFile(filename string) (string, error) {
 }
 
 func Parse(filename, text string) (string, error) {
-	tmpl, err := template.New(path.Base(filename)).Funcs(template.FuncMap{"getEnv": getEnv}).Parse(text)
+	tmpl, err := template.
+		New(path.Base(filename)).
+		Funcs(template.FuncMap{"getEnv": getEnv, "loadEnvFilename": loadEnvFilename}).
+		Parse(text)
 	if err != nil {
 		return "", err
 	}
@@ -54,4 +59,37 @@ func Parse(filename, text string) (string, error) {
 
 func getEnv(name string) string {
 	return os.Getenv(name)
+}
+
+func loadEnvFilename(prefix, name string) string {
+	f, err := os.Open(name)
+	if err != nil {
+		return ""
+	}
+	defer f.Close()
+
+	var lines []string
+  var line string
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line = strings.TrimSpace(scanner.Text())
+		if len(line) == 0 || line[0:1] == "#" {
+			continue
+		}
+
+		splitStrings := strings.Split(line, "=")
+		if len(splitStrings) != 2 || len(splitStrings[1]) == 0 {
+			continue
+		}
+		prefixed := strings.Join([]string{prefix, splitStrings[0]}, "")
+		preparedLine := strings.Join([]string{prefixed, splitStrings[1]}, ": ")
+
+		lines = append(lines, preparedLine)
+	}
+	if err := scanner.Err(); err != nil {
+		return ""
+	}
+
+	return strings.Join(lines, "\n")
 }

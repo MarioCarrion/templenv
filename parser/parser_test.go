@@ -21,18 +21,61 @@
 package parser_test
 
 import (
+	"io/ioutil"
+	"log"
 	"os"
 	"testing"
 
 	"github.com/MarioCarrion/templenv/parser"
 )
 
-func TestParse(t *testing.T) {
-	os.Setenv("USER999", "mario")
+func TestParseFileWithGetEnv(t *testing.T) {
+	file, err := ioutil.TempFile(os.TempDir(), "templenv")
+	if err != nil {
+		log.Fatal("Error while creating temp file")
+	}
+	defer os.Remove(file.Name())
 
+	os.Setenv("USER999", "mario")
 	text := `Hello {{ getEnv "USER999" }}`
+
+	_, err = file.WriteString(text)
+	if err != nil {
+		log.Fatal("Error while creating temp file")
+	}
+
 	expected := "Hello mario"
+	if result, _ := parser.ParseFile(file.Name()); result != expected {
+		t.Errorf("Expected result %s, but it was %s instead.", expected, result)
+	}
+}
+
+func TestParseWithLoadEnvFilename(t *testing.T) {
+	file, err := ioutil.TempFile(os.TempDir(), "templenv")
+	if err != nil {
+		log.Fatal("Error while creating temp file")
+	}
+	defer os.Remove(file.Name())
+
+	text := `# Nothing
+     ABC=hello world     x    
+
+INVALID1=     
+INVALID2    
+HI=1238475`
+	_, err = file.WriteString(text)
+	if err != nil {
+		log.Fatal("Error while creating temp file")
+	}
+
+	text = `START
+{{ loadEnvFilename " - " "` + file.Name() + `" }}
+END`
+	expected := `START
+ - ABC: hello world     x
+ - HI: 1238475
+END`
 	if result, _ := parser.Parse("filename.tmpl", text); result != expected {
-		t.Errorf("Expected result %s, but it was %s instead.", expected, text)
+    t.Errorf("Expected result\n%s\nbut it was instead:\n%s", expected, result)
 	}
 }
